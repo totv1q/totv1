@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  TOTV+ v12.0 — GMA Ad Services Config
+  android/app/src/main/res/xml/gma_ad_services_config.xml
+
+  مطلوب من: play-services-ads-lite
+  يحل تعارض: AD_SERVICES_CONFIG property
+-->
+<ad-services-config>
+  <attribution reportingJobEnabled="false"/>
+  <topics enabled="false"/>
+  <custom-audiences enabled="false"/>
+</ad-services-config>
