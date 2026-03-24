@@ -1,0 +1,53 @@
+name: totv_plus
+description: TOTV+ Premium Streaming App v12.0
+publish_to: 'none'
+version: 12.0.0+120
+
+environment:
+  sdk: '>=3.4.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons:              ^1.0.8
+
+  # Firebase
+  firebase_core:                ^3.8.1
+  firebase_remote_config:       ^5.1.4
+  firebase_analytics:           ^11.3.6
+  firebase_messaging:           ^15.1.6
+  cloud_firestore:              ^5.5.1
+
+  # HTTP & Cache
+  dio:                          ^5.7.0
+  cached_network_image:         ^3.4.1
+
+  # Video
+  video_player:                 ^2.9.2
+  wakelock_plus:                ^1.2.10
+
+  # UI
+  google_fonts:                 ^6.2.1
+
+  # Storage
+  shared_preferences:           ^2.3.3
+
+  # Device
+  device_info_plus:             ^10.1.2
+  package_info_plus:            ^8.1.2
+  url_launcher:                 ^6.3.1
+
+  # Audio
+  audioplayers:                 ^6.1.0
+
+  # Ads + Notifications (mobile only — web uses stubs)
+  google_mobile_ads:            ^5.2.0
+  flutter_local_notifications:  ^18.0.1
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/videos/intro.mp4
+    - assets/images/logo.png
+

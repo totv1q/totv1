@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "214530463737",
+    "project_id": "totvq-8e439",
+    "storage_bucket": "totvq-8e439.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:214530463737:android:c6447caa773d03b1164f28",
+        "android_client_info": {
+          "package_name": "com.totv.plus"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBR9NjEZHm9RhngSfYNMmphaH_gDLTApTY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

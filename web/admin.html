@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TOTV+ CMS Admin v2</title>
+<style>
+:root{
+  --bg:#030303;--bg2:#0a0a0a;--bg3:#111;
+  --card:#161616;--card2:#1c1c1c;
+  --bdr:#222;--bdr2:#1a1a1a;
+  --tx:#efefef;--t2:#999;--t3:#555;
+  --gold:#F5C518;--g2:#FFD740;--g3:#FFAB00;
+  --grn:#22c55e;--red:#ef4444;--blu:#3b82f6;
+  --pur:#a78bfa;--org:#f97316;--teal:#14b8a6;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--tx);min-height:100vh}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:#333;border-radius:2px}
+
+/* LOGIN */
+#LS{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(ellipse at 50% 0%,#1a1500,var(--bg) 70%);z-index:999}
+.lc{width:360px;background:var(--card);border:1px solid var(--bdr);border-radius:18px;padding:36px}
+.logo{text-align:center;font-size:30px;font-weight:900;color:var(--gold);letter-spacing:5px}
+.logo-s{text-align:center;color:var(--t3);font-size:11px;margin-bottom:28px;letter-spacing:.08em}
+.lf{margin-bottom:16px}.lf label{display:block;font-size:10px;color:var(--t3);margin-bottom:5px}
+.lf input{width:100%;background:var(--bg2);border:1px solid var(--bdr);border-radius:7px;color:var(--tx);padding:10px 13px;font-size:13px;outline:none}
+.lf input:focus{border-color:var(--gold)}
+.lb{width:100%;padding:11px;background:linear-gradient(135deg,var(--g2),var(--g3));color:#000;font-size:13px;font-weight:700;border:none;border-radius:7px;cursor:pointer;margin-top:6px}
+.lerr{font-size:11px;color:var(--red);text-align:center;margin-top:8px;min-height:16px}
+
+/* SHELL */
+#APP{display:none;min-height:100vh}
+.shell{display:flex}
+.sb{width:220px;background:var(--bg2);border-left:1px solid var(--bdr2);position:fixed;top:0;right:0;bottom:0;display:flex;flex-direction:column;z-index:50}
+.sb-logo{padding:16px 14px 12px;border-bottom:1px solid var(--bdr2)}
+.sb-t{font-size:16px;font-weight:900;color:var(--gold);letter-spacing:3px}
+.sb-s{font-size:9px;color:var(--t3);margin-top:1px}
+.nav{flex:1;padding:6px;overflow-y:auto}
+.ng{margin-bottom:14px}
+.ng-t{font-size:9px;font-weight:700;color:var(--t3);letter-spacing:.1em;text-transform:uppercase;padding:0 6px 5px}
+.ni{display:flex;align-items:center;gap:8px;padding:7px 9px;border-radius:7px;cursor:pointer;font-size:12px;color:var(--t2);transition:.12s;margin-bottom:1px;user-select:none}
+.ni:hover{background:var(--card);color:var(--tx)}.ni.on{background:rgba(245,197,24,.1);color:var(--gold)}
+.ni .ic{width:16px;text-align:center;font-size:14px}
+.nb{margin-right:auto;font-size:9px;font-weight:700;padding:1px 5px;border-radius:20px;background:var(--grn);color:#fff}
+.nb.r{background:var(--red)}.nb.y{background:var(--gold);color:#000}.nb.b{background:var(--blu)}
+.sb-f{padding:8px;border-top:1px solid var(--bdr2)}
+.sb-url{font-size:9px;color:var(--t3);padding:6px 8px;background:var(--bg3);border-radius:5px;word-break:break-all;margin-bottom:6px}
+.main{margin-right:220px;flex:1;min-width:0}
+.tb{position:sticky;top:0;z-index:40;background:rgba(10,10,10,.97);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--bdr2);padding:11px 20px;display:flex;align-items:center;gap:10px}
+.tb-ti{font-size:15px;font-weight:700}.tb-su{font-size:10px;color:var(--t3);margin-top:1px}
+.ct{padding:18px}.page{display:none}.page.on{display:block}
+
+/* LAYOUT */
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.card{background:var(--card);border:1px solid var(--bdr);border-radius:11px;padding:16px}
+.card2{background:var(--card2);border:1px solid var(--bdr2);border-radius:9px;padding:12px 14px}
+.stat{background:var(--card);border:1px solid var(--bdr);border-radius:11px;padding:14px 16px;position:relative;overflow:hidden}
+.stat::before{content:'';position:absolute;top:0;right:0;width:3px;height:100%;background:var(--ac,var(--gold))}
+.sn{font-size:28px;font-weight:700;line-height:1;margin-bottom:3px}
+.sl{font-size:10px;color:var(--t3)}.ss{font-size:10px;margin-top:4px;color:var(--t2)}
+.st{font-size:12px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:7px}
+.st::before{content:'';width:3px;height:13px;background:var(--gold);border-radius:2px;display:block}
+
+/* FORM */
+label{display:block;font-size:10px;color:var(--t3);margin-bottom:4px;margin-top:11px;letter-spacing:.03em}
+input,select,textarea{width:100%;background:var(--bg2);border:1px solid var(--bdr);border-radius:6px;
+  color:var(--tx);padding:8px 11px;font-size:12px;outline:none;font-family:inherit;transition:border-color .13s}
+input:focus,select:focus,textarea:focus{border-color:var(--gold)}
+textarea{resize:vertical;min-height:70px}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:6px;
+  font-size:11px;font-weight:600;cursor:pointer;border:none;transition:.12s;font-family:inherit;white-space:nowrap}
+.bg{background:linear-gradient(135deg,var(--g2),var(--g3));color:#000}.bg:hover{opacity:.88}
+.br{background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.2)}.br:hover{background:rgba(239,68,68,.18)}
+.bgrn{background:rgba(34,197,94,.1);color:var(--grn);border:1px solid rgba(34,197,94,.2)}.bgrn:hover{background:rgba(34,197,94,.18)}
+.bgh{background:var(--bg2);color:var(--t2);border:1px solid var(--bdr)}.bgh:hover{color:var(--tx)}
+.bb{background:rgba(59,130,246,.1);color:var(--blu);border:1px solid rgba(59,130,246,.2)}
+.bp{background:rgba(167,139,250,.1);color:var(--pur);border:1px solid rgba(167,139,250,.2)}
+.bt{background:rgba(20,184,166,.1);color:var(--teal);border:1px solid rgba(20,184,166,.2)}
+.bo{background:rgba(249,115,22,.1);color:var(--org);border:1px solid rgba(249,115,22,.2)}
+.sm{padding:5px 10px;font-size:10px;border-radius:5px}.btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* BADGES */
+.badge{display:inline-block;font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px}
+.gn{background:rgba(34,197,94,.12);color:var(--grn)}.rn{background:rgba(239,68,68,.12);color:var(--red)}
+.yn{background:rgba(245,197,24,.12);color:var(--gold)}.bn{background:rgba(59,130,246,.12);color:var(--blu)}
+.pn{background:rgba(167,139,250,.12);color:var(--pur)}.tn{background:rgba(20,184,166,.12);color:var(--teal)}
+.gy{background:rgba(255,255,255,.05);color:var(--t2)}.on-badge{background:rgba(34,197,94,.15);color:var(--grn)}
+
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse;font-size:11px}
+.tbl th{padding:8px 10px;text-align:right;color:var(--t3);font-weight:500;font-size:9px;
+  text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--bdr2);background:var(--bg2)}
+.tbl td{padding:9px 10px;border-bottom:1px solid var(--bdr2);vertical-align:middle}
+.tbl tr:last-child td{border:none}.tbl tr:hover td{background:rgba(255,255,255,.015)}
+.tbl-wrap{overflow-x:auto;border-radius:9px;border:1px solid var(--bdr)}
+
+/* TOGGLE */
+.tgl{width:36px;height:18px;background:var(--bdr);border-radius:9px;cursor:pointer;
+  position:relative;transition:.18s;border:none;flex-shrink:0}
+.tgl.on{background:var(--grn)}.tgl::after{content:'';width:12px;height:12px;background:#fff;border-radius:50%;
+  position:absolute;top:3px;right:3px;transition:.18s}.tgl.on::after{right:auto;left:3px}
+
+/* MISC */
+.dot{width:7px;height:7px;border-radius:50%;background:var(--t3);display:inline-block;flex-shrink:0}
+.dot.g{background:var(--grn);box-shadow:0 0 5px rgba(34,197,94,.5)}.dot.r{background:var(--red)}.dot.y{background:var(--gold)}
+.sep{border:none;border-top:1px solid var(--bdr2);margin:14px 0}
+.row{display:flex;align-items:center;gap:8px}.bw{display:flex;align-items:center;justify-content:space-between}
+.mb{margin-bottom:10px}.mt{margin-top:10px}
+.spin{width:13px;height:13px;border:2px solid rgba(245,197,24,.2);border-top-color:var(--gold);
+  border-radius:50%;animation:sp .7s linear infinite;display:inline-block}
+@keyframes sp{to{transform:rotate(360deg)}}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);
+  background:var(--card2);border:1px solid #333;border-radius:8px;
+  padding:10px 18px;font-size:12px;z-index:9999;transition:transform .22s;pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.al{border-radius:7px;padding:9px 12px;font-size:11px;line-height:1.6;margin-bottom:12px}
+.al-w{background:rgba(249,115,22,.08);border:1px solid rgba(249,115,22,.2);color:var(--org)}
+.al-i{background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);color:var(--blu)}
+.al-g{background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);color:var(--grn)}
+.empty{text-align:center;color:var(--t3);padding:24px;font-size:11px}
+.srv-card{background:var(--card);border:1px solid var(--bdr);border-radius:9px;padding:13px 15px;margin-bottom:9px}
+.srv-card.alive{border-color:rgba(34,197,94,.25)}.srv-card.dead{border-color:rgba(239,68,68,.2)}
+.tag{display:inline-block;font-size:9px;font-weight:600;padding:1px 6px;border-radius:3px;margin-left:4px}
+.tag-free{background:rgba(20,184,166,.12);color:var(--teal)}
+.tag-normal{background:rgba(59,130,246,.12);color:var(--blu)}
+.tag-basic{background:rgba(59,130,246,.12);color:var(--blu)}
+.tag-vip{background:rgba(245,197,24,.12);color:var(--gold)}
+.tag-group{background:rgba(167,139,250,.12);color:var(--pur)}
+.ntypes,.targets{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.ntype-btn,.target-btn{padding:5px 11px;border-radius:20px;font-size:10px;font-weight:600;cursor:pointer;
+  border:1px solid var(--bdr);background:var(--bg2);color:var(--t2);transition:.12s}
+.ntype-btn.on{border-color:var(--gold);color:var(--gold);background:rgba(245,197,24,.07)}
+.target-btn.on{border-color:var(--blu);color:var(--blu);background:rgba(59,130,246,.07)}
+.sec-list{display:flex;flex-direction:column;gap:6px}
+.sec-item{background:var(--card2);border:1px solid var(--bdr2);border-radius:8px;padding:10px 14px;
+  display:flex;align-items:center;gap:10px;cursor:grab}
+.sec-item:active{cursor:grabbing;opacity:.8}
+.sec-handle{color:var(--t3);font-size:14px}.sec-name{flex:1;font-size:12px}
+
+/* LIVE USERS PANEL */
+.live-dot{width:8px;height:8px;border-radius:50%;background:var(--grn);display:inline-block;
+  animation:pulse 1.5s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,.4)}50%{box-shadow:0 0 0 5px rgba(34,197,94,0)}}
+.user-row{display:flex;align-items:center;gap:10px;padding:8px 10px;border-bottom:1px solid var(--bdr2);font-size:11px}
+.user-row:last-child{border:none}
+.user-plan{display:inline-block;width:50px;text-align:center}
+
+/* CONTENT MANAGER */
+.content-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
+.content-card{background:var(--card2);border:1px solid var(--bdr2);border-radius:8px;overflow:hidden;cursor:pointer;transition:.12s}
+.content-card:hover{border-color:var(--gold)}
+.content-card img{width:100%;height:80px;object-fit:cover;background:var(--bg3)}
+.content-card-info{padding:6px 8px}
+.content-card-name{font-size:10px;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+@media(max-width:900px){
+  .sb{width:180px}.main{margin-right:180px}
+  .g4{grid-template-columns:1fr 1fr}.g3{grid-template-columns:1fr}.g2{grid-template-columns:1fr}
+}
+@media(max-width:600px){.sb{display:none}.main{margin-right:0}.ct{padding:10px}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="LS">
+  <div class="lc">
+    <div class="logo">TOTV+</div>
+    <div class="logo-s">CMS ADMIN v2.0</div>
+    <div class="lf"><label>رابط Worker (CMS)</label><input id="l-url" placeholder="https://totv-cms.workers.dev"></div>
+    <div class="lf"><label>Admin Token</label><input id="l-tok" type="password" placeholder="totv_admin_2024"></div>
+    <button class="lb" onclick="doLogin()">دخول للنظام</button>
+    <div class="lerr" id="lerr"></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="APP">
+<div class="shell">
+
+<!-- SIDEBAR -->
+<div class="sb">
+  <div class="sb-logo">
+    <div class="sb-t">TOTV+</div>
+    <div class="sb-s">CMS Admin v2.0</div>
+  </div>
+  <div class="nav">
+    <div class="ng">
+      <div class="ng-t">الرئيسية</div>
+      <div class="ni on" onclick="nav('dash')"><span class="ic">📊</span>لوحة التحكم</div>
+      <div class="ni" onclick="nav('live')"><span class="ic">👁</span>المتصلون الآن <span class="nb b" id="nb-live">0</span></div>
+    </div>
+    <div class="ng">
+      <div class="ng-t">السيرفرات</div>
+      <div class="ni" onclick="nav('servers')"><span class="ic">🖥️</span>إدارة السيرفرات</div>
+      <div class="ni" onclick="nav('groups')"><span class="ic">🌿</span>الأفرع والمجموعات</div>
+    </div>
+    <div class="ng">
+      <div class="ng-t">المشتركون</div>
+      <div class="ni" onclick="nav('subs')"><span class="ic">👥</span>الاشتراكات <span class="nb" id="nb-subs">0</span></div>
+      <div class="ni" onclick="nav('codes')"><span class="ic">🔑</span>أكواد التفعيل</div>
+    </div>
+    <div class="ng">
+      <div class="ng-t">المحتوى</div>
+      <div class="ni" onclick="nav('content')"><span class="ic">🎬</span>إدارة المحتوى</div>
+      <div class="ni" onclick="nav('sections')"><span class="ic">🗂️</span>أقسام الواجهة</div>
+      <div class="ni" onclick="nav('channels')"><span class="ic">🚫</span>القنوات المحجوبة</div>
+    </div>
+    <div class="ng">
+      <div class="ng-t">التحكم</div>
+      <div class="ni" onclick="nav('notif')"><span class="ic">🔔</span>الإشعارات <span class="nb y" id="nb-notif">0</span></div>
+      <div class="ni" onclick="nav('settings')"><span class="ic">⚙️</span>الإعدادات</div>
+      <div class="ni" onclick="nav('stats')"><span class="ic">📈</span>الإحصائيات</div>
+    </div>
+  </div>
+  <div class="sb-f">
+    <div class="sb-url" id="sb-url">—</div>
+    <button class="btn br sm" style="width:100%" onclick="logout()">تسجيل الخروج</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+<div class="tb">
+  <div style="flex:1"><div class="tb-ti" id="pg-title">لوحة التحكم</div><div class="tb-su" id="pg-sub">مرحباً في TOTV+ CMS</div></div>
+  <button class="btn bo sm" onclick="quickNotif()">📡 إشعار سريع</button>
+  <button class="btn bgh sm" onclick="refresh()">↻ تحديث</button>
+  <div class="row"><div class="dot g" id="conn-dot"></div><span style="font-size:10px;color:var(--t2)" id="conn-lbl">متصل</span></div>
+</div>
+
+<div class="ct">
+
+<!-- ══ DASHBOARD ══ -->
+<div class="page on" id="pg-dash">
+  <div class="g4 mb" id="dash-stats">
+    <div class="stat"><div class="sn" id="ds-active">—</div><div class="sl">اشتراكات نشطة</div><div class="ss" id="ds-total">—</div></div>
+    <div class="stat" style="--ac:var(--gold)"><div class="sn" id="ds-vip">—</div><div class="sl">مشتركون VIP</div></div>
+    <div class="stat" style="--ac:var(--teal)"><div class="sn" id="ds-free">—</div><div class="sl">مشتركون مجاني</div></div>
+    <div class="stat" style="--ac:var(--red)"><div class="sn" id="ds-srv">—</div><div class="sl">سيرفرات / نشطة</div></div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="st">فتح التطبيق — آخر 7 أيام</div>
+      <div id="opens-chart" style="font-size:11px;color:var(--t3)">جارٍ التحميل...</div>
+    </div>
+    <div class="card">
+      <div class="st">إجراءات سريعة</div>
+      <div class="g2" style="gap:8px">
+        <div class="card2" style="cursor:pointer;text-align:center" onclick="quickAct('maint_on')"><div style="font-size:22px;margin-bottom:4px">🔴</div><div style="font-size:10px;color:var(--t2)">تفعيل الصيانة</div></div>
+        <div class="card2" style="cursor:pointer;text-align:center" onclick="quickAct('maint_off')"><div style="font-size:22px;margin-bottom:4px">🟢</div><div style="font-size:10px;color:var(--t2)">إيقاف الصيانة</div></div>
+        <div class="card2" style="cursor:pointer;text-align:center" onclick="nav('notif')"><div style="font-size:22px;margin-bottom:4px">🔔</div><div style="font-size:10px;color:var(--t2)">إرسال إشعار</div></div>
+        <div class="card2" style="cursor:pointer;text-align:center" onclick="refreshAllContent()"><div style="font-size:22px;margin-bottom:4px">🔄</div><div style="font-size:10px;color:var(--t2)">تحديث المحتوى</div></div>
+      </div>
+    </div>
+  </div>
+  <!-- حالة السيرفرات -->
+  <div class="card mt">
+    <div class="st">حالة السيرفرات الحالية</div>
+    <div id="dash-servers"><div class="empty">جارٍ التحميل...</div></div>
+  </div>
+</div>
+
+<!-- ══ LIVE USERS ══ -->
+<div class="page" id="pg-live">
+  <div class="g2 mb">
+    <div class="stat"><div class="row" style="gap:8px"><div class="live-dot"></div><div class="sn" id="live-count">—</div></div><div class="sl">مستخدم متصل الآن</div></div>
+    <div class="stat" style="--ac:var(--teal)"><div class="sn" id="live-today">—</div><div class="sl">فتحات اليوم</div></div>
+  </div>
+  <div class="card">
+    <div class="row mb bw">
+      <div class="st" style="margin:0">المتصلون الآن (آخر 2 دقيقة)</div>
+      <button class="btn bgh sm" onclick="loadLive()">↻ تحديث</button>
+    </div>
+    <div class="al al-i" style="margin-top:0">التحديث الحقيقي للمتصلين يعمل عبر Firebase Firestore → online_users. هنا نعرض إحصاءات اليوم من KV.</div>
+    <div id="live-list"><div class="empty">جارٍ التحميل...</div></div>
+  </div>
+</div>
+
+<!-- ══ SERVERS ══ -->
+<div class="page" id="pg-servers">
+  <div class="g2" style="gap:16px">
+    <div>
+      <div class="row mb bw"><div class="st" style="margin:0">السيرفرات الحالية</div><button class="btn bgh sm" onclick="loadServers()">↻</button></div>
+      <div id="srv-list"><div class="empty">جارٍ التحميل...</div></div>
+    </div>
+    <div class="card">
+      <div class="st">إضافة سيرفر جديد</div>
+      <label>اسم السيرفر</label><input id="s-name" placeholder="مثال: سيرفر VIP الرئيسي">
+      <label>رابط السيرفر (Host)</label><input id="s-host" placeholder="http://server.com:8080">
+      <label>اسم المستخدم</label><input id="s-user" placeholder="username">
+      <label>كلمة المرور</label><input id="s-pass" placeholder="password">
+      <label>النوع</label>
+      <select id="s-type">
+        <option value="free">مجاني (Free)</option>
+        <option value="normal">عادي (Normal)</option>
+        <option value="vip">VIP</option>
+      </select>
+      <label>الأولوية (1 = الأعلى)</label><input id="s-pri" type="number" value="1" min="1" max="99">
+      <div class="row mt">
+        <button class="btn bg" onclick="addServer()">إضافة</button>
+        <button class="btn bgh" onclick="pingTest()"><span class="spin" id="ping-spin" style="display:none"></span>اختبار اتصال</button>
+      </div>
+      <div id="ping-result" class="mt"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ GROUPS ══ -->
+<div class="page" id="pg-groups">
+  <div class="g2" style="gap:16px">
+    <div>
+      <div class="st">الأفرع الحالية</div>
+      <div id="grp-list"><div class="empty">جارٍ التحميل...</div></div>
+    </div>
+    <div class="card">
+      <div class="st">إضافة فرع / مجموعة</div>
+      <div class="al al-i" style="margin-top:0">كل فرع يتصل بسيرفر خاص. عند تسجيل دخول المشترك بباقة <code>group:GROUPID</code>، يتصل بسيرفر الفرع مباشرة.</div>
+      <label>اسم الفرع</label><input id="g-name" placeholder="مثال: مجموعة VIP الخاصة">
+      <label>معرف الفرع (ID)</label><input id="g-id" placeholder="مثال: premium_vip_1">
+      <label>السيرفر المخصص للفرع</label>
+      <select id="g-srv"><option value="">اختر سيرفر...</option></select>
+      <label>ملاحظة (اختياري)</label><input id="g-note" placeholder="">
+      <button class="btn bg mt" onclick="addGroup()">إنشاء الفرع</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SUBSCRIPTIONS ══ -->
+<div class="page" id="pg-subs">
+  <div class="row mb" style="gap:8px;flex-wrap:wrap">
+    <select id="sub-filter" onchange="loadSubs()" style="width:160px">
+      <option value="all">كل الاشتراكات</option>
+      <option value="free">مجاني</option>
+      <option value="normal">عادي</option>
+      <option value="vip">VIP</option>
+    </select>
+    <button class="btn bgh sm" onclick="loadSubs()">↻</button>
+    <button class="btn bg sm" onclick="openAddSub()">+ إضافة</button>
+    <input id="sub-search" placeholder="بحث بـ Device ID..." style="width:220px;padding:5px 10px;font-size:11px" onkeyup="filterSubs()">
+    <span id="sub-count" style="font-size:11px;color:var(--t2);margin-right:auto"></span>
+  </div>
+  <div class="card mb" id="add-sub-form" style="display:none">
+    <div class="st">إضافة اشتراك يدوي</div>
+    <div class="g2" style="gap:10px">
+      <div><label>معرف الجهاز (Device ID)</label><input id="sub-dev" placeholder="TV-XXXX-XXXX"></div>
+      <div><label>نوع الاشتراك</label>
+        <select id="sub-plan">
+          <option value="normal">عادي (Normal)</option>
+          <option value="vip">VIP</option>
+          <option value="free">مجاني</option>
+        </select>
+      </div>
+      <div><label>عدد الأيام</label><input id="sub-days" type="number" value="30" min="1"></div>
+      <div><label>ملاحظة</label><input id="sub-note" placeholder="اختياري"></div>
+    </div>
+    <div class="row mt">
+      <button class="btn bg" onclick="addSub()">حفظ</button>
+      <button class="btn bgh" onclick="$('add-sub-form').style.display='none'">إلغاء</button>
+    </div>
+  </div>
+  <div class="tbl-wrap">
+    <table class="tbl">
+      <thead><tr><th>Device ID</th><th>الباقة</th><th>الانتهاء</th><th>الأيام المتبقية</th><th>الحالة</th><th>الإجراء</th></tr></thead>
+      <tbody id="subs-tbl"><tr><td colspan="6" class="empty">جارٍ التحميل...</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══ CODES ══ -->
+<div class="page" id="pg-codes">
+  <div class="g2" style="gap:16px">
+    <div>
+      <div class="row mb bw">
+        <div class="st" style="margin:0;flex:1">أكواد التفعيل</div>
+        <button class="btn bgh sm" onclick="loadCodes()">↻</button>
+      </div>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th>الكود</th><th>الباقة</th><th>الأيام</th><th>الحالة</th><th>المستخدم بواسطة</th><th>حذف</th></tr></thead>
+          <tbody id="codes-tbl"><tr><td colspan="6" class="empty">جارٍ التحميل...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+    <div>
+      <div class="card mb">
+        <div class="st">إنشاء كود واحد</div>
+        <label>الكود (اتركه فارغاً للتلقائي)</label><input id="c-code" placeholder="مثال: VIP2025">
+        <label>الباقة</label>
+        <select id="c-plan"><option value="normal">عادي</option><option value="vip">VIP</option><option value="free">مجاني</option></select>
+        <label>عدد الأيام</label><input id="c-days" type="number" value="30" min="1">
+        <label>ملاحظة</label><input id="c-note" placeholder="اختياري">
+        <button class="btn bg mt" onclick="addCode()">إنشاء</button>
+      </div>
+      <div class="card">
+        <div class="st">إنشاء أكواد بالجملة</div>
+        <label>عدد الأكواد</label><input id="cb-count" type="number" value="10" min="1" max="100">
+        <label>الباقة</label>
+        <select id="cb-plan"><option value="normal">عادي</option><option value="vip">VIP</option></select>
+        <label>عدد الأيام لكل كود</label><input id="cb-days" type="number" value="30" min="1">
+        <button class="btn bg mt" onclick="bulkCodes()">إنشاء بالجملة</button>
+        <div id="bulk-result" class="mt" style="font-size:10px;color:var(--grn);word-break:break-all;line-height:1.8;max-height:200px;overflow-y:auto"></div>
+        <button id="copy-codes-btn" class="btn bgh sm mt" style="display:none" onclick="copyCodes()">نسخ الأكواد</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ CONTENT ══ -->
+<div class="page" id="pg-content">
+  <div class="row mb bw" style="flex-wrap:wrap;gap:8px">
+    <div class="row" style="gap:8px">
+      <select id="content-type" onchange="loadContent()" style="width:140px">
+        <option value="movies">أفلام</option>
+        <option value="series">مسلسلات</option>
+        <option value="live">قنوات مباشرة</option>
+      </select>
+      <input id="content-q" placeholder="بحث في المحتوى..." style="width:220px;padding:5px 10px;font-size:11px" oninput="searchContent()">
+    </div>
+    <div class="row" style="gap:8px">
+      <button class="btn bgh sm" onclick="loadContent()">↻ تحديث</button>
+      <button class="btn bo sm" onclick="refreshAllContent()">🔄 تحديث من السيرفر</button>
+    </div>
+  </div>
+  <div id="content-stats" class="row mb" style="gap:12px;font-size:11px;color:var(--t2)"></div>
+  <div id="content-list"><div class="empty">اختر نوع المحتوى ثم اضغط تحديث</div></div>
+</div>
+
+<!-- ══ SECTIONS ══ -->
+<div class="page" id="pg-sections">
+  <div class="g2" style="gap:16px">
+    <div class="card">
+      <div class="row mb bw">
+        <div class="st" style="margin:0;flex:1">ترتيب الأقسام</div>
+        <select id="sec-plan" onchange="loadSections()" style="width:130px">
+          <option value="free">مجاني</option>
+          <option value="normal">عادي</option>
+          <option value="vip">VIP</option>
+        </select>
+      </div>
+      <div class="al al-i" style="margin-top:0;margin-bottom:12px">اسحب الأقسام لإعادة الترتيب. العين تتحكم بالظهور.</div>
+      <div class="sec-list" id="sec-list"></div>
+      <button class="btn bg mt" onclick="saveSections()">حفظ الترتيب</button>
+    </div>
+    <div class="card">
+      <div class="st">إعدادات زر الاشتراك</div>
+      <div class="al al-w" style="margin-top:0">يظهر للمستخدمين المجانيين على المحتوى المميز</div>
+      <label>نص الزر</label><input id="sec-btn-txt" value="اشترك لمشاهدة هذا المحتوى">
+      <label>رابط الاشتراك</label><input id="sec-btn-url" placeholder="https://t.me/...">
+      <button class="btn bg mt" onclick="saveSectionSettings()">حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ NOTIFICATIONS ══ -->
+<div class="page" id="pg-notif">
+  <div class="g2" style="gap:16px">
+    <div class="card">
+      <div class="st">إرسال إشعار فوري للتطبيق</div>
+      <label>العنوان</label><input id="n-title" placeholder="عنوان الإشعار">
+      <label>النص</label><textarea id="n-body" placeholder="نص الإشعار..."></textarea>
+      <label>نوع الإشعار</label>
+      <div class="ntypes">
+        <div class="ntype-btn on" data-v="info" onclick="selNType(this)">ℹ️ معلومة</div>
+        <div class="ntype-btn" data-v="warning" onclick="selNType(this)">⚠️ تنبيه</div>
+        <div class="ntype-btn" data-v="success" onclick="selNType(this)">✅ نجاح</div>
+        <div class="ntype-btn" data-v="promo" onclick="selNType(this)">🎁 عرض</div>
+        <div class="ntype-btn" data-v="update" onclick="selNType(this)">🔄 تحديث</div>
+      </div>
+      <label>إرسال إلى</label>
+      <div class="targets">
+        <div class="target-btn on" data-v="all" onclick="selTarget(this)">🌍 الكل</div>
+        <div class="target-btn" data-v="free" onclick="selTarget(this)">مجاني</div>
+        <div class="target-btn" data-v="normal" onclick="selTarget(this)">عادي</div>
+        <div class="target-btn" data-v="vip" onclick="selTarget(this)">VIP</div>
+      </div>
+      <label>رابط عند الضغط (اختياري)</label><input id="n-url" placeholder="https://...">
+      <label>انتهاء الإشعار (اختياري)</label><input id="n-exp" type="datetime-local">
+      <button class="btn bg mt" onclick="sendNotif()" style="width:100%">📡 إرسال للتطبيق الآن</button>
+    </div>
+    <div>
+      <div class="row mb bw">
+        <div class="st" style="margin:0;flex:1">الإشعارات النشطة</div>
+        <button class="btn bgh sm" onclick="loadNotifs()">↻</button>
+      </div>
+      <div id="notif-list"><div class="empty">جارٍ التحميل...</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ BLOCKED CHANNELS ══ -->
+<div class="page" id="pg-channels">
+  <div class="g2" style="gap:16px">
+    <div>
+      <div class="row mb bw"><div class="st" style="margin:0;flex:1">القنوات المحجوبة</div><button class="btn bgh sm" onclick="loadBlocked()">↻</button></div>
+      <div id="blocked-list"><div class="empty">لا قنوات محجوبة</div></div>
+    </div>
+    <div class="card">
+      <div class="st">حجب قناة</div>
+      <div class="al al-i" style="margin-top:0">أدخل معرف القناة (stream_id) من نظام Xtream. ستُخفى من جميع المستخدمين فوراً.</div>
+      <label>معرف القناة (Stream ID)</label><input id="bl-id" placeholder="مثال: 12345">
+      <button class="btn br mt" onclick="addBlocked()">🚫 حجب القناة</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SETTINGS ══ -->
+<div class="page" id="pg-settings">
+  <div class="g2" style="gap:16px">
+    <div class="card">
+      <div class="st">إعدادات التطبيق</div>
+      <div class="row mb bw"><span style="font-size:12px">🔴 وضع الصيانة</span><button class="tgl" id="t-maint" onclick="toggleSetting('maintenance')"></button></div>
+      <div class="row mb bw"><span style="font-size:12px">🔒 قفل التطبيق</span><button class="tgl" id="t-lock" onclick="toggleSetting('locked')"></button></div>
+      <div class="row mb bw"><span style="font-size:12px">🔄 إجبار التحديث</span><button class="tgl" id="t-force" onclick="toggleSetting('force_update')"></button></div>
+      <hr class="sep">
+      <label>رسالة الصيانة</label><textarea id="cfg-mm" placeholder="نعمل على تحسين الخدمة..."></textarea>
+      <label>رسالة القفل</label><textarea id="cfg-lm" placeholder="التطبيق مقفول مؤقتاً..."></textarea>
+      <label>حد المستخدمين المجانيين</label><input id="cfg-gl" type="number" value="200">
+      <label>أدنى إصدار مدعوم (min_version)</label><input id="cfg-mv" type="number" value="18">
+      <button class="btn bg mt" onclick="saveSettings()">حفظ الإعدادات</button>
+    </div>
+    <div>
+      <div class="card mb">
+        <div class="st">روابط الدعم والشراء</div>
+        <label>رابط شراء عادي</label><input id="cfg-bu" placeholder="https://t.me/...">
+        <label>رابط شراء VIP</label><input id="cfg-vu" placeholder="https://t.me/...">
+        <label>واتساب الدعم</label><input id="cfg-wa" placeholder="9647714415816">
+        <label>تيليغرام الدعم</label><input id="cfg-tg" placeholder="https://t.me/...">
+        <label>رابط التحديث</label><input id="cfg-uu" placeholder="https://...">
+        <button class="btn bg mt" onclick="saveSupportLinks()">حفظ الروابط</button>
+      </div>
+      <div class="card">
+        <div class="st">السيرفر الافتراضي (Fallback)</div>
+        <div class="al al-w" style="margin-top:0">يستخدم عند عدم وجود سيرفر مناسب للباقة</div>
+        <label>Host</label><input id="cfg-dh" placeholder="http://server.com:8080">
+        <label>Username</label><input id="cfg-du" placeholder="username">
+        <label>Password</label><input id="cfg-dp" placeholder="password">
+        <button class="btn bg mt" onclick="saveDefaultServer()">حفظ السيرفر الافتراضي</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ STATS ══ -->
+<div class="page" id="pg-stats">
+  <div class="g4 mb">
+    <div class="stat"><div class="sn" id="st-opens-today">—</div><div class="sl">فتحات اليوم</div></div>
+    <div class="stat" style="--ac:var(--grn)"><div class="sn" id="st-active">—</div><div class="sl">اشتراكات نشطة</div></div>
+    <div class="stat" style="--ac:var(--red)"><div class="sn" id="st-expired">—</div><div class="sl">اشتراكات منتهية</div></div>
+    <div class="stat" style="--ac:var(--gold)"><div class="sn" id="st-codes">—</div><div class="sl">أكواد مُنشأة</div></div>
+  </div>
+  <div class="card">
+    <div class="st">فتح التطبيق — آخر 7 أيام (حسب الباقة)</div>
+    <div id="stats-chart"></div>
+  </div>
+</div>
+
+</div><!-- /ct -->
+</div><!-- /main -->
+</div><!-- /shell -->
+</div><!-- /APP -->
+
+<div class="toast" id="toast"></div>
+
+<!-- Quick Notif Modal -->
+<div id="qn-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;display:none;align-items:center;justify-content:center">
+  <div style="background:var(--card);border:1px solid var(--bdr);border-radius:14px;padding:24px;width:380px;max-width:95vw">
+    <div class="st">إشعار سريع</div>
+    <label>العنوان</label><input id="qn-title" placeholder="عنوان الإشعار">
+    <label>النص</label><textarea id="qn-body" placeholder="نص الإشعار..." style="min-height:60px"></textarea>
+    <div class="row mt" style="justify-content:flex-end;gap:8px">
+      <button class="btn bgh" onclick="closeQN()">إلغاء</button>
+      <button class="btn bg" onclick="sendQN()">إرسال الآن 📡</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════
+// CORE
+// ════════════════════════════════════════════════════
+let WORKER_URL = localStorage.getItem('totv_url') || '';
+let ADMIN_TOKEN= localStorage.getItem('totv_tok') || '';
+let SETTINGS   = {};
+let SERVERS    = [];
+let ALL_SUBS   = [];
+let BULK_CODES = [];
+
+const $ = id => document.getElementById(id);
+
+async function api(path, body = null) {
+  const opts = {
+    method: body ? 'POST' : 'GET',
+    headers: { 'Content-Type': 'application/json', 'X-Admin-Token': ADMIN_TOKEN }
+  };
+  if (body) opts.body = JSON.stringify(body);
+  const r = await fetch(WORKER_URL + '/admin/' + path, opts);
+  if (!r.ok) throw new Error('HTTP ' + r.status);
+  return r.json();
+}
+
+function toast(msg, dur = 3000) {
+  const t = $('toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('show'), dur);
+}
+
+// ════════════════════════════════════════════════════
+// LOGIN
+// ════════════════════════════════════════════════════
+async function doLogin() {
+  const url = $('l-url').value.trim().replace(/\/$/, '');
+  const tok = $('l-tok').value.trim();
+  if (!url || !tok) { $('lerr').textContent = 'أدخل الرابط والـ Token'; return; }
+  $('lerr').textContent = '';
+  try {
+    const r = await fetch(url + '/health');
+    if (!r.ok) throw new Error('لا يمكن الوصول للـ Worker');
+    WORKER_URL = url; ADMIN_TOKEN = tok;
+    localStorage.setItem('totv_url', url); localStorage.setItem('totv_tok', tok);
+    $('LS').style.display = 'none';
+    $('APP').style.display = 'block';
+    $('sb-url').textContent = url.replace('https://', '');
+    initApp();
+  } catch (e) { $('lerr').textContent = 'خطأ: ' + e.message; }
+}
+
+function logout() {
+  localStorage.removeItem('totv_url'); localStorage.removeItem('totv_tok');
+  location.reload();
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  const u = localStorage.getItem('totv_url');
+  const t = localStorage.getItem('totv_tok');
+  if (u && t) { $('l-url').value = u; $('l-tok').value = t; doLogin(); }
+});
+
+// ════════════════════════════════════════════════════
+// NAV
+// ════════════════════════════════════════════════════
+const PAGE_META = {
+  dash:     { title: 'لوحة التحكم',         sub: 'نظرة عامة على النظام',           load: loadDash },
+  live:     { title: 'المتصلون الآن',        sub: 'المستخدمون النشطون في الوقت الحقيقي', load: loadLive },
+  servers:  { title: 'إدارة السيرفرات',      sub: 'إضافة وتعديل السيرفرات حسب الباقة', load: loadServers },
+  groups:   { title: 'الأفرع والمجموعات',    sub: 'تقسيم المشتركين لأفرع منفصلة',    load: loadGroups },
+  subs:     { title: 'الاشتراكات',           sub: 'إدارة مشتركي التطبيق',             load: loadSubs },
+  codes:    { title: 'أكواد التفعيل',        sub: 'إنشاء وإدارة أكواد الاشتراك',      load: loadCodes },
+  content:  { title: 'إدارة المحتوى',        sub: 'قائمة الأفلام والمسلسلات والقنوات', load: loadContent },
+  sections: { title: 'أقسام الواجهة',        sub: 'ترتيب الأقسام لكل باقة',           load: loadSections },
+  notif:    { title: 'الإشعارات',            sub: 'إرسال إشعارات فورية للتطبيق',       load: loadNotifs },
+  channels: { title: 'القنوات المحجوبة',     sub: 'حجب قنوات من التطبيق فوراً',        load: loadBlocked },
+  settings: { title: 'الإعدادات',            sub: 'إعدادات التطبيق وروابط الدعم',       load: loadSettings },
+  stats:    { title: 'الإحصائيات',           sub: 'إحصاءات الاستخدام والمشتركين',       load: loadStats },
+};
+let CUR_PAGE = 'dash';
+
+function nav(pg) {
+  document.querySelectorAll('.ni').forEach(n => n.classList.remove('on'));
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
+  $('pg-' + pg)?.classList.add('on');
+  const m = PAGE_META[pg] || {};
+  $('pg-title').textContent = m.title || pg;
+  $('pg-sub').textContent   = m.sub   || '';
+  CUR_PAGE = pg;
+  // highlight nav item
+  document.querySelectorAll('.ni').forEach(n => {
+    if (n.textContent.includes(m.title?.slice(0,4) || '___')) n.classList.add('on');
+  });
+  m.load?.();
+}
+
+function refresh() { PAGE_META[CUR_PAGE]?.load?.(); toast('↻ تم التحديث'); }
+
+// ════════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════════
+async function initApp() {
+  $('conn-dot').className = 'dot g';
+  $('conn-lbl').textContent = 'متصل';
+  loadDash();
+  api('subs/stats').then(s => { if (s.active) $('nb-subs').textContent = s.active; }).catch(_=>{});
+  api('notif/list').then(ns => { const a=(ns||[]).filter(n=>n.active).length; if(a) $('nb-notif').textContent=a; }).catch(_=>{});
+  // auto-refresh live count every 30s
+  setInterval(() => {
+    if (CUR_PAGE === 'live') loadLive();
+  }, 30000);
+}
+
+// ════════════════════════════════════════════════════
+// DASHBOARD
+// ════════════════════════════════════════════════════
+async function loadDash() {
+  try {
+    const [ov, opens, srvList] = await Promise.all([
+      api('stats/overview'),
+      api('stats/opens?days=7'),
+      api('servers/list'),
+    ]);
+    if (ov.subs) {
+      $('ds-active').textContent = ov.subs.active  || 0;
+      $('ds-total').textContent  = 'إجمالي: ' + (ov.subs.total || 0);
+      $('ds-vip').textContent    = ov.subs.plans?.vip    || 0;
+      $('ds-free').textContent   = ov.subs.plans?.free   || 0;
+      $('ds-srv').textContent    = (ov.servers_active||0) + ' / ' + (ov.servers_total||0);
+    }
+    renderOpensChart('opens-chart', opens);
+    // server health mini
+    const alive = (srvList||[]).filter(s => s.active !== false);
+    $('dash-servers').innerHTML = alive.length ? alive.map(s => `
+      <div class="row" style="gap:10px;padding:7px 0;border-bottom:1px solid var(--bdr2);font-size:11px">
+        <div class="dot g"></div>
+        <span style="font-weight:600">${s.name||s.host}</span>
+        <span class="tag tag-${s.type}">${s.type}</span>
+        <span style="color:var(--t3)">${s.host}</span>
+      </div>`).join('') : '<div class="empty">لا سيرفرات — أضف سيرفراً أولاً</div>';
+  } catch(e) { console.error(e); }
+}
+
+function renderOpensChart(id, data) {
+  if (!data || !data.length) { $(id).textContent='لا بيانات'; return; }
+  const max = Math.max(...data.map(d=>d.total), 1);
+  $(id).innerHTML = data.map(d => {
+    const pct = Math.round((d.total/max)*100);
+    return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+      <span style="font-size:10px;color:var(--t3);width:40px;flex-shrink:0">${d.date.slice(5)}</span>
+      <div style="flex:1;background:var(--bdr2);border-radius:3px;height:14px;overflow:hidden">
+        <div style="width:${pct}%;height:100%;background:linear-gradient(90deg,var(--g3),var(--g2));border-radius:3px;transition:.3s"></div>
+      </div>
+      <span style="font-size:10px;color:var(--t2);width:30px;text-align:left">${d.total}</span>
+    </div>`;
+  }).join('');
+}
+
+async function quickAct(act) {
+  const map = { maint_on: { maintenance:true }, maint_off: { maintenance:false } };
+  await api('settings/save', map[act]);
+  toast(act==='maint_on' ? '🔴 صيانة مُفعَّلة' : '🟢 صيانة مُغلقة');
+  loadSettings();
+}
+
+async function refreshAllContent() {
+  await api('content/refresh', { type: 'all' }).catch(_=>{});
+  toast('🔄 جارٍ تحديث المحتوى من السيرفر...');
+}
+
+// ════════════════════════════════════════════════════
+// LIVE USERS
+// ════════════════════════════════════════════════════
+async function loadLive() {
+  try {
+    const [opens] = await Promise.all([api('stats/opens?days=1')]);
+    const today   = opens?.[opens.length-1]?.total || 0;
+    $('live-count').textContent  = '~';
+    $('live-today').textContent  = today;
+    $('nb-live').textContent     = today;
+
+    $('live-list').innerHTML = `
+      <div class="al al-i" style="margin-top:0">
+        المستخدمون المتصلون حقيقياً يُراقَبون عبر Firebase Firestore (collection: online_users).
+        افتح Firebase Console لرؤيتهم مباشرة. الرقم أعلاه هو فتحات اليوم من KV.
+      </div>
+      <div class="row" style="gap:12px;flex-wrap:wrap">
+        ${(opens||[]).slice(-3).map(d => `
+          <div class="card2" style="flex:1;min-width:120px;text-align:center">
+            <div style="font-size:20px;font-weight:700;color:var(--gold)">${d.total}</div>
+            <div style="font-size:10px;color:var(--t3)">${d.date}</div>
+          </div>`).join('')}
+      </div>`;
+  } catch(_) {}
+}
+
+// ════════════════════════════════════════════════════
+// SERVERS
+// ════════════════════════════════════════════════════
+async function loadServers() {
+  const list = await api('servers/list').catch(() => []);
+  SERVERS = list;
+  const gSrv = $('g-srv');
+  if (gSrv) gSrv.innerHTML = '<option value="">اختر سيرفر...</option>' +
+    list.map(s => `<option value="${s.id}">${s.name||s.host} (${s.type})</option>`).join('');
+
+  if (!list.length) { $('srv-list').innerHTML='<div class="empty">لا سيرفرات — أضف أولاً</div>'; return; }
+  $('srv-list').innerHTML = list.map(s => `
+    <div class="srv-card ${s.active!==false?'alive':'dead'}">
+      <div class="row bw">
+        <div class="row" style="gap:8px">
+          <div class="dot ${s.active!==false?'g':'r'}"></div>
+          <span style="font-size:13px;font-weight:600">${s.name||s.host}</span>
+          <span class="tag tag-${s.type}">${s.type}</span>
+          <span style="font-size:9px;color:var(--t3)">أولوية ${s.priority||99}</span>
+        </div>
+        <div class="row" style="gap:6px">
+          <button class="btn ${s.active!==false?'br':'bgrn'} sm" onclick="toggleServer('${s.id}',${s.active!==false})">
+            ${s.active!==false?'إيقاف':'تفعيل'}
+          </button>
+          <button class="btn bb sm" onclick="pingServerById('${s.id}')">Ping</button>
+          <button class="btn br sm" onclick="deleteServer('${s.id}')">🗑</button>
+        </div>
+      </div>
+      <div style="font-size:10px;color:var(--t3);margin-top:5px">${s.host} · ${s.username}</div>
+      <div id="ping-${s.id}" style="font-size:10px;margin-top:4px"></div>
+    </div>`).join('');
+}
+
+async function addServer() {
+  const d = {
+    name: $('s-name').value, host: $('s-host').value.trim().replace(/\/$/,''),
+    username: $('s-user').value.trim(), password: $('s-pass').value.trim(),
+    type: $('s-type').value, priority: parseInt($('s-pri').value)||1
+  };
+  if (!d.host || !d.username) { toast('الرابط واسم المستخدم مطلوبان'); return; }
+  const r = await api('servers/add', d);
+  if (r.ok) { toast('✅ تم إضافة السيرفر'); loadServers(); ['s-name','s-host','s-user','s-pass'].forEach(id=>$(id).value=''); }
+  else toast('خطأ: '+(r.error||'غير معروف'));
+}
+
+async function toggleServer(id, wasActive) {
+  await api('servers/update', { id, active: !wasActive });
+  toast(wasActive ? '⏸ تم الإيقاف' : '▶️ تم التفعيل');
+  loadServers();
+}
+
+async function deleteServer(id) {
+  if (!confirm('حذف هذا السيرفر؟')) return;
+  await api('servers/delete', { id });
+  toast('🗑 تم الحذف'); loadServers();
+}
+
+async function pingServerById(id) {
+  const srv = SERVERS.find(s=>s.id===id);
+  if (!srv) return;
+  $(`ping-${id}`).innerHTML = '<span class="spin"></span> جارٍ الاختبار...';
+  try {
+    const r = await api('servers/ping', { host: srv.host, username: srv.username, password: srv.password });
+    $(`ping-${id}`).innerHTML = r.ok
+      ? `<span style="color:var(--grn)">✅ متصل — ${r.ms}ms</span>`
+      : `<span style="color:var(--red)">❌ فشل الاتصال</span>`;
+  } catch(_) { $(`ping-${id}`).innerHTML = '<span style="color:var(--red)">❌ خطأ</span>'; }
+}
+
+async function pingTest() {
+  const h=$('s-host').value.trim(), u=$('s-user').value.trim(), p=$('s-pass').value.trim();
+  if (!h||!u) { toast('أدخل بيانات السيرفر أولاً'); return; }
+  $('ping-spin').style.display='inline-block';
+  $('ping-result').innerHTML='';
+  try {
+    const r = await api('servers/ping', { host: h, username: u, password: p });
+    $('ping-result').innerHTML = r.ok
+      ? `<span style="color:var(--grn)">✅ متصل — ${r.ms}ms</span>`
+      : `<span style="color:var(--red)">❌ فشل الاتصال</span>`;
+  } catch(_) { $('ping-result').innerHTML='<span style="color:var(--red)">❌ خطأ</span>'; }
+  $('ping-spin').style.display='none';
+}
+
+// ════════════════════════════════════════════════════
+// GROUPS
+// ════════════════════════════════════════════════════
+async function loadGroups() {
+  await loadServers();
+  const list = await api('groups/list').catch(()=>[]);
+  if (!list.length) { $('grp-list').innerHTML='<div class="empty">لا أفرع — أضف فرعاً أولاً</div>'; return; }
+  $('grp-list').innerHTML = list.map(g => {
+    const srv = SERVERS.find(s=>s.id===g.server_id);
+    return `<div class="card2 mb row bw">
+      <div>
+        <div class="row" style="gap:6px"><span style="font-size:13px;font-weight:600">${g.name}</span><span class="tag tag-group">group:${g.id}</span></div>
+        <div style="font-size:10px;color:var(--t3);margin-top:3px">السيرفر: ${srv?srv.name||srv.host:g.server_id}</div>
+        ${g.note?`<div style="font-size:10px;color:var(--t3)">${g.note}</div>`:''}
+      </div>
+      <button class="btn br sm" onclick="deleteGroup('${g.id}')">🗑</button>
+    </div>`;
+  }).join('');
+}
+
+async function addGroup() {
+  const d = { id: $('g-id').value.trim(), name: $('g-name').value.trim(), server_id: $('g-srv').value, note: $('g-note').value };
+  if (!d.name||!d.server_id) { toast('الاسم والسيرفر مطلوبان'); return; }
+  const r = await api('groups/add', d);
+  if (r.ok) { toast('✅ تم إنشاء الفرع'); loadGroups(); ['g-name','g-id','g-note'].forEach(id=>$(id).value=''); }
+}
+
+async function deleteGroup(id) {
+  if (!confirm('حذف الفرع؟')) return;
+  await api('groups/delete', { id }); toast('🗑 تم الحذف'); loadGroups();
+}
+
+// ════════════════════════════════════════════════════
+// SUBSCRIPTIONS
+// ════════════════════════════════════════════════════
+async function loadSubs() {
+  const plan = $('sub-filter').value;
+  ALL_SUBS = await api(`subs/list?plan=${plan}`).catch(()=>[]);
+  $('sub-count').textContent = ALL_SUBS.length + ' اشتراك';
+  renderSubs(ALL_SUBS);
+}
+
+function filterSubs() {
+  const q = $('sub-search').value.toLowerCase();
+  const filtered = q ? ALL_SUBS.filter(s => s.device_id?.toLowerCase().includes(q)) : ALL_SUBS;
+  renderSubs(filtered);
+}
+
+function renderSubs(list) {
+  const now = Date.now();
+  $('subs-tbl').innerHTML = list.length ? list.map(s => {
+    const exp    = new Date(s.expiry).toLocaleDateString('ar');
+    const active = s.expiry > now;
+    const days   = active ? Math.ceil((s.expiry - now) / 86400000) : 0;
+    const pc     = { vip:'yn', normal:'bn', basic:'bn', free:'tn' }[s.plan]||'gy';
+    return `<tr>
+      <td style="font-family:monospace;font-size:10px">${s.device_id}</td>
+      <td><span class="badge ${pc}">${s.plan}</span></td>
+      <td style="color:var(--t2);font-size:10px">${exp}</td>
+      <td style="color:${days<7?'var(--red)':days<30?'var(--gold)':'var(--grn)'];font-size:10px">${active?days+'y':'منتهي'}</td>
+      <td><span class="badge ${active?'gn':'rn'}">${active?'نشط':'منتهي'}</span></td>
+      <td style="display:flex;gap:4px">
+        <button class="btn bgrn sm" onclick="renewSub('${s.device_id}','${s.plan}')">تجديد</button>
+        <button class="btn br sm" onclick="deleteSub('${s.device_id}')">حذف</button>
+      </td>
+    </tr>`;
+  }).join('') : '<tr><td colspan="6" class="empty">لا اشتراكات</td></tr>';
+}
+
+function openAddSub() {
+  const f = $('add-sub-form');
+  f.style.display = f.style.display==='none' ? 'block' : 'none';
+}
+
+async function addSub() {
+  const d = { device_id: $('sub-dev').value.trim(), plan: $('sub-plan').value, days: parseInt($('sub-days').value)||30, note: $('sub-note').value };
+  if (!d.device_id) { toast('أدخل Device ID'); return; }
+  const r = await api('subs/add', d);
+  if (r.ok) { toast('✅ تم إضافة الاشتراك'); $('add-sub-form').style.display='none'; loadSubs(); }
+}
+
+async function renewSub(deviceId, plan) {
+  const days = prompt('عدد أيام التجديد:', '30');
+  if (!days) return;
+  const r = await api('subs/renew', { device_id: deviceId, days: parseInt(days), plan });
+  if (r.ok) { toast('✅ تم التجديد'); loadSubs(); }
+}
+
+async function deleteSub(deviceId) {
+  if (!confirm('حذف هذا الاشتراك؟')) return;
+  await api('subs/delete', { device_id: deviceId }); toast('🗑 تم الحذف'); loadSubs();
+}
+
+// ════════════════════════════════════════════════════
+// CODES
+// ════════════════════════════════════════════════════
+async function loadCodes() {
+  const list = await api('codes/list').catch(()=>[]);
+  $('codes-tbl').innerHTML = list.length ? list.map(c => {
+    const pc = { vip:'yn', normal:'bn', basic:'bn', free:'tn' }[c.plan]||'gy';
+    return `<tr>
+      <td style="font-family:monospace;font-weight:700;color:var(--gold);letter-spacing:1px">${c.code}</td>
+      <td><span class="badge ${pc}">${c.plan}</span></td>
+      <td style="color:var(--t2)">${c.days}د</td>
+      <td><span class="badge ${c.used?'rn':'gn'}">${c.used?'مستخدم':'متاح'}</span></td>
+      <td style="font-size:10px;color:var(--t3)">${c.used_by?c.used_by.slice(0,14)+'...':'—'}</td>
+      <td><button class="btn br sm" onclick="deleteCode('${c.code}')">🗑</button></td>
+    </tr>`;
+  }).join('') : '<tr><td colspan="6" class="empty">لا أكواد</td></tr>';
+}
+
+async function addCode() {
+  const d = { code: $('c-code').value.trim()||undefined, plan: $('c-plan').value, days: parseInt($('c-days').value)||30, note: $('c-note').value };
+  const r = await api('codes/add', d);
+  if (r.ok) { toast('✅ الكود: '+r.code, 5000); loadCodes(); $('c-code').value=''; }
+}
+
+async function bulkCodes() {
+  const d = { count: parseInt($('cb-count').value)||10, plan: $('cb-plan').value, days: parseInt($('cb-days').value)||30 };
+  $('bulk-result').textContent='جارٍ الإنشاء...';
+  const r = await api('codes/bulk', d);
+  if (r.ok) {
+    BULK_CODES = r.codes;
+    $('bulk-result').innerHTML = r.codes.map(c=>`<span style="display:inline-block;background:var(--bg3);border-radius:4px;padding:2px 8px;margin:2px;font-family:monospace;color:var(--gold)">${c}</span>`).join('');
+    $('copy-codes-btn').style.display='inline-flex';
+    toast('✅ تم إنشاء '+r.codes.length+' كود');
+    loadCodes();
+  }
+}
+
+async function deleteCode(code) {
+  await api('codes/delete', { code }); toast('🗑 تم الحذف'); loadCodes();
+}
+
+function copyCodes() {
+  navigator.clipboard.writeText(BULK_CODES.join('\n')).then(()=>toast('📋 تم نسخ الأكواد'));
+}
+
+// ════════════════════════════════════════════════════
+// CONTENT
+// ════════════════════════════════════════════════════
+async function loadContent() {
+  const type = $('content-type').value;
+  $('content-list').innerHTML = '<div class="empty"><span class="spin"></span> جارٍ التحميل...</div>';
+  try {
+    const r = await fetch(WORKER_URL + `/content?type=${type}&page=1`);
+    const data = await r.json();
+    $('content-stats').innerHTML = `<span>📦 إجمالي: <strong style="color:var(--gold)">${data.total||0}</strong></span><span style="color:var(--t3)">•</span><span>آخر تحديث: <strong>${data.ts?new Date(data.ts).toLocaleString('ar'):'-'}</strong></span>`;
+    const items = data.items||[];
+    if (!items.length) { $('content-list').innerHTML='<div class="empty">لا محتوى — اضغط "تحديث من السيرفر" أولاً</div>'; return; }
+    $('content-list').innerHTML = `<div class="content-grid">` + items.slice(0,100).map(i => {
+      const img = i.stream_icon||i.cover||'';
+      const name = i.name||i.title||i.stream_name||'—';
+      return `<div class="content-card" title="${name}">
+        ${img ? `<img src="${img.startsWith('/img')?WORKER_URL+img:img}" onerror="this.style.display='none'" loading="lazy">` : '<div style="width:100%;height:80px;background:var(--bg3);display:flex;align-items:center;justify-content:center;color:var(--t3);font-size:20px">🎬</div>'}
+        <div class="content-card-info"><div class="content-card-name">${name}</div></div>
+      </div>`;
+    }).join('') + '</div>';
+  } catch(_) { $('content-list').innerHTML='<div class="empty">خطأ في جلب المحتوى</div>'; }
+}
+
+async function searchContent() {
+  const type = $('content-type').value;
+  const q    = $('content-q').value.trim();
+  if (q.length < 2) return;
+  try {
+    const r = await fetch(WORKER_URL + `/content?type=${type}&q=${encodeURIComponent(q)}`);
+    const data = await r.json();
+    const items = data.items||[];
+    $('content-list').innerHTML = items.length ? `<div class="content-grid">` + items.slice(0,50).map(i => {
+      const img = i.stream_icon||i.cover||'';
+      const name = i.name||i.title||i.stream_name||'—';
+      return `<div class="content-card" title="${name}">
+        ${img?`<img src="${img.startsWith('/img')?WORKER_URL+img:img}" onerror="this.style.display='none'" loading="lazy">`:'<div style="width:100%;height:80px;background:var(--bg3)"></div>'}
+        <div class="content-card-info"><div class="content-card-name">${name}</div></div>
+      </div>`;
+    }).join('') + '</div>' : '<div class="empty">لا نتائج</div>';
+  } catch(_) {}
+}
+
+// ════════════════════════════════════════════════════
+// SECTIONS
+// ════════════════════════════════════════════════════
+const DEF_SECTIONS = [
+  {id:'live',name:'قنوات مباشرة',visible:true},
+  {id:'movies',name:'أفلام',visible:true},
+  {id:'series',name:'مسلسلات',visible:true},
+  {id:'sports',name:'رياضة',visible:true},
+  {id:'kids',name:'أطفال',visible:true},
+  {id:'news',name:'أخبار',visible:false},
+];
+
+async function loadSections() {
+  const plan = $('sec-plan').value;
+  const data = await api(`sections/get?plan=${plan}`).catch(()=>null);
+  renderSections(data||DEF_SECTIONS);
+  const s = await api('settings/get').catch(()=>({}));
+  if (s.sub_btn_text) $('sec-btn-txt').value=s.sub_btn_text;
+  if (s.sub_btn_url)  $('sec-btn-url').value=s.sub_btn_url;
+}
+
+function renderSections(sections) {
+  $('sec-list').innerHTML = sections.map((s,i) => `
+    <div class="sec-item" draggable="true" data-idx="${i}" data-id="${s.id}"
+      ondragstart="dragStart(event)" ondragover="dragOver(event)" ondrop="dropSec(event)">
+      <span class="sec-handle">⠿</span>
+      <span class="sec-name">${s.name}</span>
+      <button class="tgl sec-vis ${s.visible?'on':''}" onclick="toggleSecVis(${i})"></button>
+    </div>`).join('');
+}
+
+let dragIdx=null;
+function dragStart(e){dragIdx=parseInt(e.currentTarget.dataset.idx);}
+function dragOver(e){e.preventDefault();}
+function dropSec(e){
+  e.preventDefault();
+  const toIdx=parseInt(e.currentTarget.dataset.idx);
+  const items=[...$('sec-list').children];
+  const ids=items.map(el=>el.dataset.id);
+  const moved=ids.splice(dragIdx,1)[0];ids.splice(toIdx,0,moved);
+  const sections=ids.map(id=>{
+    const el=$('sec-list').querySelector(`[data-id="${id}"]`);
+    return {id,name:el.querySelector('.sec-name').textContent,visible:el.querySelector('.tgl').classList.contains('on')};
+  });
+  renderSections(sections);
+}
+function toggleSecVis(idx){[...$('sec-list').children][idx].querySelector('.tgl').classList.toggle('on');}
+
+async function saveSections(){
+  const plan=$('sec-plan').value;
+  const sections=[...$('sec-list').children].map(el=>({id:el.dataset.id,name:el.querySelector('.sec-name').textContent,visible:el.querySelector('.tgl').classList.contains('on')}));
+  await api('sections/save',{plan,sections});
+  toast('✅ تم حفظ ترتيب الأقسام');
+}
+
+async function saveSectionSettings(){
+  await api('settings/save',{sub_btn_text:$('sec-btn-txt').value,sub_btn_url:$('sec-btn-url').value});
+  toast('✅ تم الحفظ');
+}
+
+// ════════════════════════════════════════════════════
+// NOTIFICATIONS
+// ════════════════════════════════════════════════════
+function selNType(el){document.querySelectorAll('.ntype-btn').forEach(b=>b.classList.remove('on'));el.classList.add('on');}
+function selTarget(el){document.querySelectorAll('.target-btn').forEach(b=>b.classList.remove('on'));el.classList.add('on');}
+
+async function sendNotif(){
+  const title=$('n-title').value.trim(), body=$('n-body').value.trim();
+  if (!title||!body){toast('العنوان والنص مطلوبان');return;}
+  const type=document.querySelector('.ntype-btn.on')?.dataset.v||'info';
+  const target=document.querySelector('.target-btn.on')?.dataset.v||'all';
+  const expInput=$('n-exp').value;
+  const expiry=expInput?new Date(expInput).getTime():null;
+  const r=await api('notif/send',{title,body,type,target,url:$('n-url').value,expiry});
+  if(r.ok){
+    toast('📡 تم إرسال الإشعار للتطبيق!');
+    $('n-title').value='';$('n-body').value='';$('n-url').value='';$('n-exp').value='';
+    loadNotifs();
+    $('nb-notif').textContent=parseInt($('nb-notif').textContent||0)+1;
+  }
+}
+
+async function loadNotifs(){
+  const list=await api('notif/list').catch(()=>[]);
+  if(!list.length){$('notif-list').innerHTML='<div class="empty">لا إشعارات</div>';return;}
+  const ico={info:'ℹ️',warning:'⚠️',success:'✅',promo:'🎁',update:'🔄'};
+  const tgt={all:'الكل',free:'مجاني',normal:'عادي',vip:'VIP'};
+  $('notif-list').innerHTML=list.map(n=>{
+    const exp=n.expiry?new Date(n.expiry).toLocaleDateString('ar'):null;
+    return `<div class="card2 mb">
+      <div class="row bw">
+        <div class="row" style="gap:6px">
+          <span>${ico[n.type]||'🔔'}</span>
+          <span style="font-size:12px;font-weight:600">${n.title}</span>
+          <span class="badge bn">${tgt[n.target]||n.target}</span>
+          ${n.active?'<span class="badge gn">نشط</span>':'<span class="badge gy">منتهي</span>'}
+        </div>
+        <button class="btn br sm" onclick="deleteNotif('${n.id}')">🗑</button>
+      </div>
+      <div style="font-size:11px;color:var(--t2);margin-top:5px">${n.body}</div>
+      ${exp?`<div style="font-size:10px;color:var(--t3);margin-top:3px">ينتهي: ${exp}</div>`:''}
+    </div>`;
+  }).join('');
+}
+
+async function deleteNotif(id){await api('notif/delete',{id});toast('🗑');loadNotifs();}
+
+// Quick Notif
+function quickNotif(){$('qn-modal').style.display='flex';}
+function closeQN(){$('qn-modal').style.display='none';}
+async function sendQN(){
+  const title=$('qn-title').value.trim(),body=$('qn-body').value.trim();
+  if(!title||!body){toast('العنوان والنص مطلوبان');return;}
+  await api('notif/send',{title,body,type:'info',target:'all'});
+  toast('📡 تم الإرسال!');closeQN();
+  $('qn-title').value='';$('qn-body').value='';
+}
+
+// ════════════════════════════════════════════════════
+// BLOCKED
+// ════════════════════════════════════════════════════
+async function loadBlocked(){
+  const list=await api('blocked/list').catch(()=>[]);
+  if(!list.length){$('blocked-list').innerHTML='<div class="empty">لا قنوات محجوبة</div>';return;}
+  $('blocked-list').innerHTML=list.map(id=>`
+    <div class="row card2 mb bw">
+      <span style="font-family:monospace;font-size:12px">${id}</span>
+      <button class="btn br sm" onclick="unblock('${id}')">رفع الحجب</button>
+    </div>`).join('');
+}
+
+async function addBlocked(){
+  const id=$('bl-id').value.trim();
+  if(!id){toast('أدخل معرف القناة');return;}
+  await api('blocked/add',{id});toast('🚫 تم حجب القناة');$('bl-id').value='';loadBlocked();
+}
+
+async function unblock(id){await api('blocked/delete',{id});toast('🔓 تم رفع الحجب');loadBlocked();}
+
+// ════════════════════════════════════════════════════
+// SETTINGS
+// ════════════════════════════════════════════════════
+async function loadSettings(){
+  const s=await api('settings/get').catch(()=>({}));
+  SETTINGS=s;
+  $('t-maint').className='tgl'+(s.maintenance?' on':'');
+  $('t-lock').className='tgl'+(s.locked?' on':'');
+  $('t-force').className='tgl'+(s.force_update?' on':'');
+  const f=(id,key)=>{if($(id))$(id).value=s[key]||'';};
+  f('cfg-mm','maint_msg');f('cfg-lm','lock_msg');
+  if($('cfg-gl'))$('cfg-gl').value=s.guest_limit||200;
+  if($('cfg-mv'))$('cfg-mv').value=s.min_version||18;
+  f('cfg-bu','buy_url');f('cfg-vu','vip_buy_url');
+  f('cfg-wa','support_whatsapp');f('cfg-tg','support_telegram');f('cfg-uu','update_url');
+  if(s.default_server){
+    f('cfg-dh','default_server.host');
+    $('cfg-dh').value=s.default_server?.host||'';
+    $('cfg-du').value=s.default_server?.username||'';
+    $('cfg-dp').value=s.default_server?.password||'';
+  }
+}
+
+async function toggleSetting(key){
+  SETTINGS[key]=!SETTINGS[key];
+  const ids={maintenance:'t-maint',locked:'t-lock',force_update:'t-force'};
+  $(ids[key])?.classList.toggle('on',SETTINGS[key]);
+  await api('settings/save',{[key]:SETTINGS[key]});
+  toast(SETTINGS[key]?'✅ مُفعَّل':'⚪ مُوقَف');
+}
+
+async function saveSettings(){
+  await api('settings/save',{maint_msg:$('cfg-mm').value,lock_msg:$('cfg-lm').value,guest_limit:parseInt($('cfg-gl').value)||200,min_version:parseInt($('cfg-mv').value)||18});
+  toast('✅ تم الحفظ');
+}
+
+async function saveSupportLinks(){
+  await api('settings/save',{buy_url:$('cfg-bu').value,vip_buy_url:$('cfg-vu').value,support_whatsapp:$('cfg-wa').value,support_telegram:$('cfg-tg').value,update_url:$('cfg-uu').value});
+  toast('✅ تم حفظ الروابط');
+}
+
+async function saveDefaultServer(){
+  await api('settings/save',{default_server:{host:$('cfg-dh').value.trim().replace(/\/$/,''),username:$('cfg-du').value.trim(),password:$('cfg-dp').value.trim()}});
+  toast('✅ تم حفظ السيرفر الافتراضي');
+}
+
+// ════════════════════════════════════════════════════
+// STATS
+// ════════════════════════════════════════════════════
+async function loadStats(){
+  const [ov,opens]=await Promise.all([api('stats/overview'),api('stats/opens?days=7')]).catch(()=>[{},[]]);
+  if(ov.subs){
+    const today=opens?.[opens.length-1]?.total||0;
+    $('st-opens-today').textContent=today;
+    $('st-active').textContent=ov.subs.active||0;
+    $('st-expired').textContent=ov.subs.expired||0;
+    $('st-codes').textContent=ov.codes_total||0;
+  }
+  if(opens&&opens.length){
+    $('stats-chart').innerHTML=opens.map(d=>{
+      const plans=d.plans||{};
+      const bars=['vip','normal','basic','free'].map(p=>{
+        const colors={vip:'#F5C518',normal:'#3b82f6',basic:'#3b82f6',free:'#14b8a6'};
+        const count=plans[p]||0;
+        return `<span title="${p}: ${count}" style="display:inline-block;width:${Math.max(count*4,count?2:0)}px;height:14px;background:${colors[p]};margin-left:1px;border-radius:2px"></span>`;
+      }).join('');
+      return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <span style="font-size:10px;color:var(--t3);width:44px;flex-shrink:0">${d.date.slice(5)}</span>
+        <div style="flex:1;display:flex;align-items:center">${bars}</div>
+        <span style="font-size:10px;color:var(--t2);width:30px">${d.total}</span>
+      </div>`;
+    }).join('')+`<div style="font-size:9px;color:var(--t3);margin-top:8px">
+      <span style="color:#F5C518">■</span> VIP &nbsp; <span style="color:#3b82f6">■</span> عادي &nbsp; <span style="color:#14b8a6">■</span> مجاني
+    </div>`;
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,112 @@
+workflows:
+
+  # ══════════════════════════════════════════════════════
+  #  Android — AAB + APKs
+  # ══════════════════════════════════════════════════════
+  android-release:
+    name: TOTV+ Android Release
+    max_build_duration: 90
+    instance_type: mac_mini_m2
+    environment:
+      flutter: 3.27.4
+      java: 17
+    cache:
+      cache_paths:
+        - ~/.gradle/caches
+        - ~/.pub-cache
+    scripts:
+      - name: Set local.properties
+        script: |
+          echo "flutter.sdk=$FLUTTER_ROOT" > android/local.properties
+          echo "flutter.versionName=12.0.0" >> android/local.properties
+          echo "flutter.versionCode=120" >> android/local.properties
+
+      - name: Get packages
+        script: flutter pub get
+
+      - name: Build AAB (Google Play)
+        script: |
+          flutter build appbundle \
+            --release \
+            --no-tree-shake-icons
+
+      - name: Build Universal APK (Android TV + Smart TV + هاتف)
+        script: |
+          flutter build apk \
+            --release \
+            --no-tree-shake-icons \
+            --target-platform android-arm,android-arm64
+
+      - name: Build Split APKs (للهواتف)
+        script: |
+          flutter build apk \
+            --release \
+            --split-per-abi \
+            --no-tree-shake-icons
+
+    artifacts:
+      - build/app/outputs/bundle/release/*.aab
+      - build/app/outputs/apk/release/*.apk
+
+  # ══════════════════════════════════════════════════════
+  #  Web — Firebase Hosting
+  # ══════════════════════════════════════════════════════
+  web-release:
+    name: TOTV+ Web Release
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    environment:
+      flutter: 3.27.4
+    cache:
+      cache_paths:
+        - ~/.pub-cache
+    scripts:
+      - name: Get packages
+        script: flutter pub get
+
+      - name: Build Web
+        script: |
+          flutter build web \
+            --release \
+            --base-href / \
+            --no-tree-shake-icons
+
+      - name: Copy web configs
+        script: |
+          cp web/_headers   build/web/_headers   2>/dev/null || true
+          cp web/_redirects build/web/_redirects 2>/dev/null || true
+
+    artifacts:
+      - build/web/**
+
+  # ══════════════════════════════════════════════════════
+  #  Windows — EXE كامل + مثبت + ZIP
+  # ══════════════════════════════════════════════════════
+  windows-release:
+    name: TOTV+ Windows Release
+    max_build_duration: 120
+    instance_type: mac_mini_m2
+    environment:
+      flutter: 3.27.4
+    cache:
+      cache_paths:
+        - ~/.pub-cache
+    scripts:
+      - name: Get packages
+        script: flutter pub get
+
+      - name: Build Windows Release
+        script: |
+          flutter build windows \
+            --release \
+            --no-tree-shake-icons
+
+      - name: Package — ZIP كامل
+        script: |
+          cd build/windows/x64/runner/Release
+          zip -r ../../../../../TOTV_Plus_Windows.zip .
+          cd ../../../../..
+          echo "ZIP size: $(du -sh TOTV_Plus_Windows.zip)"
+
+    artifacts:
+      - TOTV_Plus_Windows.zip
